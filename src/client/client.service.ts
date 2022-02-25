@@ -13,8 +13,8 @@ export class ClientService {
   ) {}
     
   createClient(clientDto: ClientDto): Promise<Client> {
-    const {name, lastName, phoneNumber, email} = clientDto;
-    const client = new Client(name, lastName, phoneNumber, email);
+    const {name, lastName, phoneNumber, email, type} = clientDto;
+    const client = new Client(name, lastName, phoneNumber, email, type, new Date());
     return this.clientRepository.save(client);
   }
 

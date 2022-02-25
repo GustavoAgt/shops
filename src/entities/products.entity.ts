@@ -1,5 +1,5 @@
 import { Invoice } from './invoice.entity';
-import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
 
 @Entity()
 export class Product {
@@ -12,9 +12,15 @@ export class Product {
     @Column()
     name: string;
    
-    @Column()
+    @Column({type: "double precision"})
     price: number;
 
-    @ManyToOne(type => Invoice, Invoice => Invoice.products)
+    @ManyToOne(type => Invoice, invoice => invoice.products)
     invoice: Invoice;
+
+    constructor(type?: string, name?: string, price?: number) {
+        this.type = type;
+        this.name = name;
+        this.price = price;
+    }
 }

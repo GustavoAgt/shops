@@ -1,14 +1,18 @@
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
 import { Injectable } from '@nestjs/common';
-import { CreateInvoiceDto } from './dto/create-invoice.dto';
+import { Invoice } from 'src/entities/invoice.entity';
 
 @Injectable()
 export class InvoiceService {
-  create(createInvoiceDto: CreateInvoiceDto) {
-    return 'This action adds a new invoice';
+  constructor(
+    @InjectRepository(Invoice) private invoiceRepo: Repository<Invoice>,
+  ) {}
+  createInvoice(invoice: Invoice): Promise<Invoice> {
+    return this.invoiceRepo.save({...invoice});
   }
 
-  findAll() {
-    return `This action returns all invoice`;
+  findAllInvoices(): Promise<Invoice[]> {
+    return this.invoiceRepo.find();
   }
-
 }

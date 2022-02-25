@@ -1,3 +1,4 @@
+import { ProductModule } from './product/product.module';
 import { Discount } from './entities/discount.entity';
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
@@ -28,7 +29,8 @@ import { DiscountModule } from './discount/discount.module';
     }),
     ClientModule,
     InvoiceModule,
-    DiscountModule
+    DiscountModule,
+    ProductModule
   ],
   controllers: [AppController],
   providers: [AppService],

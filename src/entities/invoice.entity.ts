@@ -1,22 +1,39 @@
 import { Product } from './products.entity';
 import { Client } from 'src/entities/client.entity';
-import { Column, Entity, ManyToOne, PrimaryGeneratedColumn, OneToMany } from 'typeorm';
+import {
+  Column,
+  Entity,
+  ManyToOne,
+  PrimaryGeneratedColumn,
+  OneToMany,
+} from 'typeorm';
 
 @Entity()
 export class Invoice {
+  @PrimaryGeneratedColumn()
+  id: number;
 
-    @PrimaryGeneratedColumn()
-    id: number; 
+  @Column({ name: 'generated_date' })
+  generatedDate: Date;
 
-    @Column({name: "generated_date"})
-    generatedDate: Date;
+  @Column({ type: 'double precision' })
+  total: number;
 
-    @Column()
-    total: number;
+  @ManyToOne((type) => Client, (client) => client.invoices, {cascade: true})
+  client: Client;
 
-    @ManyToOne(type => Client, client => client.invoices)
-    client: Client; 
+  @OneToMany((type) => Product, (product) => product.invoice, {cascade: true})
+  products: Product[];
 
-    @OneToMany(type => Product, product => product.invoice)
-    products: Product[];
+  constructor(
+    generatedDate?: Date,
+    total?: number,
+    client?: Client,
+    products?: Product[],
+  ) {
+    this.generatedDate = generatedDate;
+    this.total = total;
+    this.client = client;
+    this.products = products;
+  }
 }

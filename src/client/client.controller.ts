@@ -1,14 +1,11 @@
-import { Client } from 'src/entities/client.entity';
 import { ClientService } from './client.service';
 import {
   Body,
   Controller,
   Get,
-  Param,
   ParseIntPipe,
   Post,
   Query,
-  Res,
 } from '@nestjs/common';
 import ClientDto from 'src/common/dto/clientDto.dto';
 
@@ -21,21 +18,19 @@ export class ClientController {
     this.clientService.createClient(clientDto);
   }
 
-  @Get('all')
+  @Get()
   async findAll() {
     return await this.clientService.findAllClients();
   }
 
-  @Get('findById')
+  @Get()
   async findById(@Query('id') id: number) {
     console.log(id);
     return await this.clientService.findClientById(id);
   }
 
-  @Get('findByName')
-  async findByName(
-    @Query('name') name: string,
-  ) {
+  @Get()
+  async findByName(@Query('name') name: string) {
     return await this.clientService.findClientByName(name);
   }
 }

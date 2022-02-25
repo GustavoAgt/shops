@@ -1,33 +1,35 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
-import { InvoiceService } from './invoice.service';
-import { CreateInvoiceDto } from './dto/create-invoice.dto';
+import { Controller, Get, Post, Body } from '@nestjs/common';
 
-@Controller('invoice')
+import { ProccessInvoiceData } from './../common/services/processInvoiceData.service';
+
+import { CreateInvoiceDto } from '../common/dto/createInvoice.dto';
+
+import { InvoiceService } from './invoice.service';
+import { ClientService } from 'src/client/client.service';
+import { Product } from 'src/entities/products.entity';
+import { Invoice } from 'src/entities/invoice.entity';
+
+
+@Controller('shopsrus/invoices')
 export class InvoiceController {
-  constructor(private readonly invoiceService: InvoiceService) {}
+  constructor(
+    private readonly invoiceServ: InvoiceService,
+    private readonly clientServ: ClientService,
+    private readonly proccessInvoice: ProccessInvoiceData,
+  ) {}
 
   @Post()
-  create(@Body() createInvoiceDto: CreateInvoiceDto) {
-    return this.invoiceService.create(createInvoiceDto);
+  async createInvoice(@Body() createInvoiceDto: CreateInvoiceDto) {
+    const client = await this.clientServ.findClientById(createInvoiceDto?.client?.id);
+    const products: Product[] = this.proccessInvoice.fetchProductList(createInvoiceDto.products);
+    const percentageOfDiscount = await this.proccessInvoice.proccessDiscounts(client);
+    const total = await this.proccessInvoice.calculateDiscount(percentageOfDiscount, products);
+    const invoice = new Invoice(new Date(), total, client, products);
+    await this.invoiceServ.createInvoice(invoice);
   }
 
-  // @Get()
-  // findAll() {
-  //   return this.invoiceService.findAll();
-  // }
-
-  // @Get(':id')
-  // findOne(@Param('id') id: string) {
-  //   return this.invoiceService.findOne(+id);
-  // }
-
-  // @Patch(':id')
-  // update(@Param('id') id: string, @Body() updateInvoiceDto: UpdateInvoiceDto) {
-  //   return this.invoiceService.update(+id, updateInvoiceDto);
-  // }
-
-  // @Delete(':id')
-  // remove(@Param('id') id: string) {
-  //   return this.invoiceService.remove(+id);
-  // }
+  @Get()
+  async findAll() {
+    console.log(await this.invoiceServ.findAllInvoices())
+  }
 }
