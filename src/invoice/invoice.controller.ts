@@ -5,9 +5,9 @@ import { ProccessInvoiceData } from './../common/services/processInvoiceData.ser
 import { CreateInvoiceDto } from '../common/dto/createInvoice.dto';
 
 import { InvoiceService } from './invoice.service';
-import { ClientService } from 'src/client/client.service';
-import { Product } from 'src/entities/products.entity';
-import { Invoice } from 'src/entities/invoice.entity';
+import { ClientService } from '../client/client.service';
+import { Invoice } from '../entities/invoice.entity';
+import { Item } from '../entities/item.entity';
 
 
 @Controller('shopsrus/invoices')
@@ -21,15 +21,19 @@ export class InvoiceController {
   @Post()
   async createInvoice(@Body() createInvoiceDto: CreateInvoiceDto) {
     const client = await this.clientServ.findClientById(createInvoiceDto?.client?.id);
-    const products: Product[] = this.proccessInvoice.fetchProductList(createInvoiceDto.products);
-    const percentageOfDiscount = await this.proccessInvoice.proccessDiscounts(client);
-    const total = await this.proccessInvoice.calculateDiscount(percentageOfDiscount, products);
+    const items: Item[] = this.proccessInvoice.fetchItemList(createInvoiceDto.items);
+    const percentageOfDiscount = await this.proccessInvoice.processDiscounts(client);
+    const total = await this.proccessInvoice.calculateDiscount(percentageOfDiscount, items);
+    const products = this.proccessInvoice.insertItemIntoProducts(items);
     const invoice = new Invoice(new Date(), total, client, products);
+    
     await this.invoiceServ.createInvoice(invoice);
+
+    return "Invoice Created";
   }
 
   @Get()
   async findAll() {
-    console.log(await this.invoiceServ.findAllInvoices())
+    return await this.invoiceServ.findAllInvoices();
   }
 }

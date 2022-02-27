@@ -2,7 +2,7 @@ import { DiscountDto } from './../common/dto/discount.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Injectable } from '@nestjs/common';
 import { Repository } from 'typeorm';
-import { Discount } from 'src/entities/discount.entity';
+import { Discount } from '../entities/discount.entity';
 
 @Injectable()
 export class DiscountService {
@@ -21,7 +21,7 @@ export class DiscountService {
     return this.discountRepository.find();
   }
 
-  findByType(type: string): Promise<Discount> {
+  findDiscountByType(type: string): Promise<Discount> {
     return this.discountRepository.findOne({type})
   }
 }

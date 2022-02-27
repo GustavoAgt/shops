@@ -2,12 +2,13 @@ import { ClientService } from './client.service';
 import {
   Body,
   Controller,
+  ForbiddenException,
   Get,
   ParseIntPipe,
   Post,
   Query,
 } from '@nestjs/common';
-import ClientDto from 'src/common/dto/clientDto.dto';
+import ClientDto from '../common/dto/clientDto.dto';
 
 @Controller('shopsrus/clients')
 export class ClientController {
@@ -16,20 +17,20 @@ export class ClientController {
   @Post()
   async create(@Body() clientDto: ClientDto) {
     this.clientService.createClient(clientDto);
+    return 'Client Created';
   }
 
-  @Get()
+  @Get("all")
   async findAll() {
     return await this.clientService.findAllClients();
   }
 
-  @Get()
+  @Get("id")
   async findById(@Query('id') id: number) {
-    console.log(id);
     return await this.clientService.findClientById(id);
   }
 
-  @Get()
+  @Get("name")
   async findByName(@Query('name') name: string) {
     return await this.clientService.findClientByName(name);
   }

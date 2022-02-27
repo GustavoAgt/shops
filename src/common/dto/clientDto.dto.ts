@@ -1,5 +1,5 @@
 export default interface ClientDto{
-    id: number;
+    id?: number;
     name: string;
     lastName: string;
     phoneNumber: string;

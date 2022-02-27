@@ -1,46 +1,47 @@
 import { Injectable } from '@nestjs/common';
 
-import { ProductDto } from 'src/common/dto/product.dto';
-
-import { ProductService } from './../../product/product.service';
+import { ItemService } from './../../item/item.service';
 import { DiscountService } from './../../discount/discount.service';
 
-import { Product } from 'src/entities/products.entity';
-import { Client } from 'src/entities/client.entity';
-import { Discount } from 'src/entities/discount.entity';
-import { ClientType } from '../enums/ClientType.enum';
+import { Product } from './../../entities/product.entity';
+import { Client } from './../../entities/client.entity';
+import { Item } from './../../entities/item.entity';
+import { Discount } from './../../entities/discount.entity';
+
+import { ItemDto } from '../dto/item.dto';
+
 import { DiscountsType } from '../enums/DiscountsTypes.enum';
 
 @Injectable()
 export class ProccessInvoiceData {
   constructor(
-    private readonly productServ: ProductService,
+    private readonly itemServ: ItemService,
     private readonly discountServ: DiscountService,
   ) {}
 
-  fetchProductList(productsDto: ProductDto[]): Product[] {
-    const products: Product[] = [];
+  fetchItemList(itemDto: ItemDto[]): Item[] {
+    const items: Item[] = [];
 
-    productsDto.forEach((product) => {
-      this.productServ.findProductById(product?.id).then((data) => {
+    itemDto.forEach((item) => {
+      this.itemServ.findItemById(item?.id).then((data) => {
         if (data) {
-          products.push(data);
+          items.push(data);
         }
       });
     });
 
-    return products;
+    return items;
   }
 
-  async proccessDiscounts(client: Client) {
-    const discount: Discount = await this.discountServ.findByType(client.type);
+  async processDiscounts(client: Client) {
+    const discount: Discount = await this.discountServ.findDiscountByType(client.type);
 
     try {
       if (
         discount === undefined &&
         this.calculateTimeBeingClient(client.startDate) >= 2
       ) {
-        return await this.discountServ.findByType(DiscountsType.TWO_YEARS);
+        return await this.discountServ.findDiscountByType(DiscountsType.TWO_YEARS);
       }
     } catch (error) {
       // HANDLE ERROR
@@ -49,27 +50,39 @@ export class ProccessInvoiceData {
     return discount;
   }
 
- async calculateDiscount(discount: Discount, products: Product[]) {
-     const hundredDiscount = await this.discountServ.findByType(DiscountsType.ONE_HUNDRED_DOLLARS);
-    const t = products.map((product) => {
+  async calculateDiscount(discount: Discount, items: Item[]) {
+    const hundredDiscount = await this.discountServ.findDiscountByType(
+      DiscountsType.ONE_HUNDRED_DOLLARS,
+    );
+
+    const t = items.map((item) => {
       let total = 0;
 
-      if (product.type === 'not-edible') {
+      if (item.type === 'not-edible') {
         if (discount ?? discount.discountAmount) {
-          total += product.price - (product.price * discount.discountAmount);
-          console.log("not-edible'", total)
+          total += item.price - item.price * discount.discountAmount;
         }
       } else {
-        total += product.price;
-        console.log("ediable", total)
+        total += item.price;
       }
 
       return total;
     });
 
     const result = t.reduce((prev, curr) => prev + curr);
-    const discoutnOfHundred = (Math.floor((result /100)) * 100) * hundredDiscount.discountAmount;
-    return (result - discoutnOfHundred);
+    const discoutnOfHundred =
+      Math.floor(result / 100) * 100 * hundredDiscount.discountAmount;
+    return result - discoutnOfHundred;
+  }
+
+  insertItemIntoProducts(items: Item[]): Product[]{
+    const products: Product[] = [];
+    
+    items.forEach((item) => {
+      products.push(new Product(item.type, item.name, item.price))
+    });
+
+    return products;
   }
 
   private calculateTimeBeingClient(date: Date) {

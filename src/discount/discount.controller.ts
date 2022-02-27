@@ -8,7 +8,8 @@ export class DiscountController {
 
   @Post()
   async create(@Body() discountDto: DiscountDto) {
-     return await this.discountSev.createNewDiscount(discountDto);
+      await this.discountSev.createNewDiscount(discountDto);
+      return "Discount created" 
   }
 
   @Get('all')
@@ -18,6 +19,6 @@ export class DiscountController {
 
   @Get()
   async findByType(@Query('type') type: string) {
-    return await this.discountSev.findByType(type);
+    return await this.discountSev.findDiscountByType(type);
   }
 }

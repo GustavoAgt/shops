@@ -28,12 +28,13 @@ export class Client {
     @OneToMany(type => Invoice, invoice => invoice.client)
     invoices: Invoice[];
 
-    constructor(name?: string, lastName?: string, phoneNumber?: string, email?: string, type?: string, startDate?: Date) {
+    constructor(name?: string, lastName?: string, phoneNumber?: string, email?: string, type?: string, startDate?: Date, id?: number) {
         this.name = name;
         this.lastName = lastName;
         this.phoneNumber = phoneNumber;
         this.email = email;
         this.type = type;
         this.startDate = startDate;
+        this.id = id;
     }
 }

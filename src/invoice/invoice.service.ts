@@ -1,7 +1,7 @@
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Injectable } from '@nestjs/common';
-import { Invoice } from 'src/entities/invoice.entity';
+import { Invoice } from '../entities/invoice.entity';
 
 @Injectable()
 export class InvoiceService {
@@ -9,7 +9,7 @@ export class InvoiceService {
     @InjectRepository(Invoice) private invoiceRepo: Repository<Invoice>,
   ) {}
   createInvoice(invoice: Invoice): Promise<Invoice> {
-    return this.invoiceRepo.save({...invoice});
+    return this.invoiceRepo.save(invoice);
   }
 
   findAllInvoices(): Promise<Invoice[]> {

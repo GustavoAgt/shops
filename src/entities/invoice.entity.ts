@@ -1,5 +1,5 @@
-import { Product } from './products.entity';
-import { Client } from 'src/entities/client.entity';
+import { Product } from './product.entity';
+import { Client } from '../entities/client.entity';
 import {
   Column,
   Entity,
@@ -19,10 +19,10 @@ export class Invoice {
   @Column({ type: 'double precision' })
   total: number;
 
-  @ManyToOne((type) => Client, (client) => client.invoices, {cascade: true})
+  @ManyToOne((type) => Client, (client) => client.invoices, {cascade: true, eager : true})
   client: Client;
 
-  @OneToMany((type) => Product, (product) => product.invoice, {cascade: true})
+  @OneToMany((type) => Product, (product) => product.invoice, {cascade: true, eager : true})
   products: Product[];
 
   constructor(

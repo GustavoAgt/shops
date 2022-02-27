@@ -1,5 +1,4 @@
-import { ProductModule } from './product/product.module';
-import { Discount } from './entities/discount.entity';
+
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
@@ -8,12 +7,15 @@ import { AppService } from './app.service';
 
 import { Client } from './entities/client.entity';
 import { Invoice } from './entities/invoice.entity';
-import { Product } from './entities/products.entity';
-
+import { Product } from './entities/product.entity';
+import { Item } from './entities/item.entity';
+import { Discount } from './entities/discount.entity';
 
 import { ClientModule } from './client/client.module';
 import { InvoiceModule } from './invoice/invoice.module';
 import { DiscountModule } from './discount/discount.module';
+import { ProductModule } from './product/product.module';
+import { ItemModule } from './item/item.module';
 
 @Module({
   imports: [
@@ -24,13 +26,14 @@ import { DiscountModule } from './discount/discount.module';
       username: 'pgadmin',
       password: 'no-secured',
       database: 'postgres',
-      entities: [Client, Invoice, Product, Discount],
+      entities: [Client, Invoice, Product, Discount, Item],
       synchronize: true,
     }),
     ClientModule,
     InvoiceModule,
     DiscountModule,
-    ProductModule
+    ProductModule,
+    ItemModule
   ],
   controllers: [AppController],
   providers: [AppService],
