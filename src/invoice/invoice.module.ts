@@ -3,7 +3,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { Module } from '@nestjs/common';
 
 import { Invoice } from './../entities/invoice.entity';
-import { Product } from 'src/entities/product.entity';
+import { Product } from '../entities/product.entity';
 import { Client } from '../entities/client.entity';
 import { Discount } from '../entities/discount.entity';
 import { Item } from '../entities/item.entity';

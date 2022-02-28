@@ -1,8 +1,25 @@
-export default interface ClientDto{
-    id?: number;
-    name: string;
-    lastName: string;
-    phoneNumber: string;
-    email: string;
-    type: string;
+import { IsNotEmpty, IsEmail, IsNumber, IsString } from 'class-validator';
+export default class ClientDto {
+  @IsNumber()
+  id?: number;
+
+  @IsString()
+  @IsNotEmpty()
+  name: string;
+
+  @IsString()
+  @IsNotEmpty()
+  lastName: string;
+
+  @IsString()
+  @IsNotEmpty()
+  phoneNumber: string;
+
+  @IsString()
+  @IsEmail()
+  email: string;
+
+  @IsString()
+  @IsEmail()
+  type: string;
 }
